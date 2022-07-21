@@ -1,7 +1,14 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0");
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0");
+
+
+
+ .App {
+  font-family: 'Dongle', sans-serif;
 }
 
+/*
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +42,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
