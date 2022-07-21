@@ -1,11 +1,11 @@
 import React from "react";
-import {useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import styled from "styled-components";
 
 import { auth } from "./shared/firebase";
-import {loadPostThunk} from "./redux/modules/magazineSlice"
+import { deletePostThunk, loadPostThunk } from "./redux/modules/magazineSlice";
 import Spinner from "./Spinner";
 
 const Home = () => {
@@ -14,12 +14,12 @@ const Home = () => {
   const [is_login, setIslogin] = React.useState(false);
   const is_loaded = useSelector((state) => state.post.is_loaded);
   const posts = useSelector((state) => state.post.posts);
-  
+
   console.log(is_loaded, posts);
 
   React.useEffect(() => {
     dispatch(loadPostThunk());
-  }, [])
+  }, []);
 
   const loginCheck = async (user) => {
     if (user) {
@@ -30,8 +30,8 @@ const Home = () => {
   };
 
   const deleteDocs = (e) => {
-
-  }
+    dispatch(deletePostThunk(e.target.id))
+  };
 
   React.useEffect(() => {
     onAuthStateChanged(auth, loginCheck);
@@ -41,24 +41,91 @@ const Home = () => {
     <>
       <Container>
         <WritingField>
-          {posts.map(post => 
-            <PostBox layout={post.layout}>
-            <div style={{ width: "50%"}}>
-              <img
-                alt="이미지 미리보기"
-                style={{ maxWidth: "500px", maxHeight: "300px"}}
-                src={post.img_url}
-              ></img>
-            </div>
-            <div style={{ width: "50%", border: "1px solid #99ccff", minWidth:"100%", maxHeight:"300px"}}>
-              <span>{post.text}</span>
-            </div>
-            <DeleteBtn onClick={deleteDocs}>작성하기</DeleteBtn>
-          </PostBox>
-          )}
-            
+          {posts.map((post) => {
+            if(post.layout == "left") {
+              return ( 
+                <div>
+                  <PostBox>
+                    <div style={{ width: "50%" }}>
+                      <img
+                        alt="이미지 미리보기"
+                        style={{ maxWidth: "500px", maxHeight: "300px" }}
+                        src={post.img_url}
+                      ></img>
+                    </div>
+                    <div
+                      style={{
+                        width: "50%",
+                        border: "1px solid #99ccff",
+                        minWidth: "100%",
+                        maxHeight: "300px",
+                      }}
+                    >
+                      <span>{post.text}</span>
+                    </div>
+                  </PostBox>
+                  <div style={{ width:"1000px", marginBottom:"30px"}}>
+                    <DeleteBtn id={post.id} onClick={deleteDocs}>삭제</DeleteBtn>
+                  </div>
+                </div>
+              )
+            } else if (post.layout == "right") {
+              return (
+                <div>
+                  <PostBox>
+                    <div
+                      style={{
+                        width: "50%",
+                        border: "1px solid #99ccff",
+                        minWidth: "100%",
+                        maxHeight: "300px",
+                      }}
+                    >
+                      <span>{post.text}</span>
+                    </div>
+                    <div style={{ width: "50%" }}>
+                      <img
+                        alt="이미지 미리보기"
+                        style={{ maxWidth: "500px", maxHeight: "300px" }}
+                        src={post.img_url}
+                      ></img>
+                    </div>
+                  </PostBox>
+                  <div style={{ width:"1000px", marginBottom:"30px"}}>
+                    <DeleteBtn id={post.id} onClick={deleteDocs}>삭제</DeleteBtn>
+                  </div>
+                </div>
+              )
+            } else {
+              return (
+                <BottomPreviewBox>
+                  <PostBox style={{ display:"block" }}>
+                  <div
+                      style={{
+                        width: "50%",
+                        border: "1px solid #99ccff",
+                        minWidth: "100%",
+                        maxHeight: "300px",
+                      }}
+                    >
+                      <span>{post.text}</span>
+                    </div>
+                    <div style={{ width: "50%" }}>
+                      <img
+                        alt="이미지 미리보기"
+                        style={{ maxWidth: "500px", maxHeight: "300px" }}
+                        src={post.img_url}
+                      ></img>
+                    </div>
+                  </PostBox>
+                  <div style={{ width:"1000px", marginBottom:"30px"}}>
+                    <DeleteBtn id={post.id} onClick={deleteDocs}>삭제</DeleteBtn>
+                  </div>
+                </BottomPreviewBox>
+              )
+            }
+          })}
         </WritingField>
-
 
         {is_login ? (
           <span
@@ -114,9 +181,14 @@ const DeleteBtn = styled.div`
   width: 100px;
   margin: 0px auto;
   color: white;
-  border: 1px solid #99ccff;
   background-color: #99ccff;
   cursor: pointer;
+`;
+
+const BottomPreviewBox = styled.div`
+  display: grid;
+  height: 400px;
+  align-items: center;
 `;
 
 export default Home;
